@@ -62,8 +62,8 @@ void subsetsUtil(vector<int>& A, vector<vector<int> >& res,
 	vector<int>& subset, int index)
 {
 	res.push_back(subset);
-	for (int i = index; i < A.size(); i++) {
-
+	for (int i = index; i < A.size(); i++)
+	{
 		subset.push_back(A[i]);
 		subsetsUtil(A, res, subset, i + 1);
 		subset.pop_back();
@@ -76,7 +76,6 @@ vector<vector<int> > subsets(vector<int>& A)
 	vector<vector<int> > res;
 	int index = 0;
 	subsetsUtil(A, res, subset, index);
-
 	return res;
 }
 void createMatrices(vector<pair<int, int>>pairs, string ciphertext)
@@ -106,6 +105,18 @@ void createMatrices(vector<pair<int, int>>pairs, string ciphertext)
 			cout << endl;
 		}
 		cout << endl;
+
+		cout << "final ciphered text: ";
+		for (int j = 0; j < pairs[i].second; j++)
+		{
+			for (int k = 0; k < pairs[i].first; k++)
+			{
+				cout << arr[j][k];
+			}
+		}
+		cout << endl;
+		cout << "------------------\n";
+
 		cout << "------------------\n";
 	}
 }
@@ -138,6 +149,7 @@ void transposition(string ciphertext)
 	int product = 1;
 	for (auto i : factors)
 		product *= i;
+
 	sets=subsets(factors);	//matrix dimensions
 	createPair(sets,pairs,product);
 	createMatrices(pairs, ciphertext);
