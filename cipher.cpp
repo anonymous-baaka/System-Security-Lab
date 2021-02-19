@@ -58,20 +58,26 @@ void factorise(int n,vector<int>& vec)
 	}
 	return;
 }
-void permute(vector<int>factors, vector<pair<int, int>>& pairs)
+void subsetsUtil(vector<int>& A, vector<vector<int> >& res,
+	vector<int>& subset, int index)
 {
-	int product = 1;
-	for (int i = 0; i < factors.size(); i++)
-		product *= factors[i];
-	for (int i = 0; i < factors.size(); i++)
-	{
-		if (!count(pairs.begin(), pairs.end(), make_pair(factors[i], product / factors[i])))
-		{
-			pairs.push_back(make_pair(factors[i], product / factors[i]));
-			pairs.push_back(make_pair(product / factors[i], factors[i]));
-		}
+	res.push_back(subset);
+	for (int i = index; i < A.size(); i++) {
+
+		subset.push_back(A[i]);
+		subsetsUtil(A, res, subset, i + 1);
+		subset.pop_back();
 	}
 	return;
+}
+vector<vector<int> > subsets(vector<int>& A)
+{
+	vector<int> subset;
+	vector<vector<int> > res;
+	int index = 0;
+	subsetsUtil(A, res, subset, index);
+
+	return res;
 }
 void createMatrices(vector<pair<int, int>>pairs, string ciphertext)
 {
@@ -103,16 +109,48 @@ void createMatrices(vector<pair<int, int>>pairs, string ciphertext)
 		cout << "------------------\n";
 	}
 }
+void createPair(vector<vector<int>>& set, vector<pair<int, int>>& pair,int product)
+{
+	for (int i = 0; i < set.size(); i++)
+	{
+		int subProduct = 1;
+		for (int j = 0; j < set[i].size(); j++)
+			subProduct *= set[i][j];
+		if (!count(pair.begin(), pair.end(), make_pair(subProduct, product / subProduct)) && subProduct!=1 && product/subProduct!=1)
+		{
+			pair.push_back(make_pair(subProduct, product / subProduct));
+			pair.push_back(make_pair(product / subProduct, subProduct));
+		}
+	}
+	return;
+}
 void transposition(string ciphertext)
 {
 	int cipherLength = ciphertext.size();
 	vector<int>factors;
 	vector<pair<int, int>> pairs;
+	vector<vector<int>>sets;
 	factorise(cipherLength, factors);
+	
 	if (factors.size() == 1)
 		factors.push_back(1);
-	permute(factors,pairs);		//matrix dimensions
+
+	int product = 1;
+	for (auto i : factors)
+		product *= i;
+	sets=subsets(factors);	//matrix dimensions
+	createPair(sets,pairs,product);
 	createMatrices(pairs, ciphertext);
+}
+string generateRandomPlaintext(int size)
+{
+	string str = "";
+	for (int i = 0; i < size; i++)
+	{
+		char ch= rand() % 26+'a';
+		str += ch;
+	}
+	return str;
 }
 int main()
 {
@@ -131,7 +169,9 @@ int main()
 		{
 		case 'e':
 			cout << "enter the text to encrypt: ";
-			cin >> plaintext;
+			//cin >> plaintext;
+			plaintext = generateRandomPlaintext(60);
+			cout << "generated pt= " << plaintext << endl;
 			do
 			{
 				cout << "Enter key (between 1 to 25)";
