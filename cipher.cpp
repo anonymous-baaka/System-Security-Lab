@@ -164,6 +164,35 @@ string generateRandomPlaintext(int size)
 	}
 	return str;
 }
+}
+string dTranspose(string& encryptedText,int nrow,int ncolumn) //detranspose deciphered text
+{
+	string plaintext = "";
+	if (nrow == 0)
+		nrow = encryptedText.size() / ncolumn;
+	else if (ncolumn == 0)
+		ncolumn = encryptedText.size() / nrow;
+	int index = 0;
+	vector<vector<char>> vec;
+	for (int i = 0; i < nrow; i++)
+	{
+		vector<char>temp;
+		for (int j = 0; j < ncolumn; j++)
+		{
+		temp.push_back(encryptedText[index++]);
+		}
+		vec.push_back(temp);
+	}
+	for (int i = 0; i < ncolumn; i++)
+	{
+		for (int j = 0; j < nrow; j++)
+		{
+		plaintext += vec[j][i];
+		}
+	}
+	return plaintext;
+}
+
 int main()
 {
 	string plaintext;
@@ -199,7 +228,12 @@ int main()
 			cout << "\nenter key: ";
 			cin >> key;
 			plaintext = decrypt(ciphertext, key);
-			cout << "\ndecrypted key is: "<<plaintext<<endl;
+			cout << "\substituted key is: "<<plaintext<<endl;
+			cout << "\nEnter row,column (0 if not known): ";
+			cin >> row >> column;
+			plaintext = dTranspose(plaintext, row,column);
+
+			cout << "\nplaintext is: "<<plaintext<<endl;
 			break;
 		case 'q':
 			flag = false;
