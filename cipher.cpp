@@ -94,7 +94,6 @@ string decrypt(string ciphertext, int key)
 }
 void display3d(vector<vector<vector<char>>> output)
 {
-    //cout << "\ndAll matrix combinations: \n "<< endl;
     for (int i = 0; i < output.size(); i++)
     {
         string myText = "";
@@ -109,7 +108,6 @@ void display3d(vector<vector<vector<char>>> output)
         }
         Mycount++;
         cout << "\n" << decrypt(myText, CEASKEY)<<endl<<endl;
-        //cout << "\n--------------------\n";
 
     }
     return;
@@ -213,14 +211,11 @@ string generateRandomPlaintext(int size)
 
 int main()
 {
+    map<pair<int, int>, int>consideredPairs;
     string plaintext = "";
     string subText = "";
 	int key;
-    //cout << "\nEnter plaintext: ";
-    //cin >> plaintext;
-    //cout << "\nEnter key: ";
-    //cin >> key;
-    plaintext = generateRandomPlaintext(16);
+    plaintext = generateRandomPlaintext(30);
     cout << "\nplaintext= " << plaintext<<endl;
     subText = encrypt(plaintext, CEASKEY);
     cout << "\nsubstituted text= " << subText<<endl;
@@ -230,14 +225,6 @@ int main()
     vector<pair<int, int>> pairs;
     vector<vector<int>>sets;
     factorise(cipherLength, factors);
-
-    //cout << "\n length of substituted text = " << cipherLength;
-    //cout << "\n factors of " << cipherLength << " = ";
-    /*for (int i = 1; i <= cipherLength; i++)
-    {
-        if (cipherLength % i == 0)
-            cout << i << ", ";
-    }*/
     cout << endl;
 
     if (factors.size() == 1)
@@ -254,7 +241,12 @@ int main()
     for (int i = 0; i < pairs.size(); i++)
     {
         key = pairs[i].first;
-        vector<vector<char>> matrix = makeTranspoMatrix(subText, key);//{ {'n','x','q'},{'d','o',' '},{'f','k','d'},{'x','g','k'},{'d','u','b'} };
+        pair<int, int>tmppair = make_pair(pairs[i].first, pairs[i].second);
+        consideredPairs[tmppair]++;
+
+        if (consideredPairs[tmppair] > 1)
+            continue;
+        vector<vector<char>> matrix = makeTranspoMatrix(subText, key);
 
         vector<vector<vector<char>>> output = generateMatrixOfMatrices(matrix, key);
 
